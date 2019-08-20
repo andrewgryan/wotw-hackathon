@@ -37,9 +37,9 @@
 
             visit(url)
             getRequest(url, function(responseText) {
-                let things = JSON.parse(responseText).collections;
-                let ukv = things.filter(function(thing) {
-                    return thing.id == "ukv_deterministic_surface_239"
+                let jsonResponse = JSON.parse(responseText);
+                let ukv = jsonResponse.collections.filter(function(collection) {
+                    return collection.id == "ukv_deterministic_surface_239"
                 });
                 let url = ukv[0].links[0].href;
                 visit(url)
