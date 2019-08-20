@@ -12,6 +12,16 @@ wotw = (function() {
         xhr.send()
     }
 
+    let setOptions = function(el, values) {
+        el.innerHTML = ""
+        values.forEach(function(value) {
+            let option = document.createElement("option")
+            option.value = value
+            option.innerHTML = value
+            el.appendChild(option)
+        })
+    }
+
     ns.main = function() {
         let collectionID = null;
         let instanceID = null;
@@ -23,31 +33,22 @@ wotw = (function() {
         navDiv.appendChild(instanceSelect)
         url = "http://labs.metoffice.gov.uk/wotw/collections?outputFormat=application%2Fjson"
         getRequest(url, function(responseText) {
-            JSON.parse(responseText).collections.forEach((collection) => {
-                let option = document.createElement("option")
-                option.value = collection.id
-                option.innerHTML = collection.id
-                collectionSelect.appendChild(option)
-            })
+            let values = JSON.parse(responseText).collections.map((c) => c.id)
+            setOptions(collectionSelect, values)
         })
         collectionSelect.onchange = function(event) {
             collectionID = event.target.value
             let url = `http://labs.metoffice.gov.uk/wotw/collections/${collectionID}?outputFormat=application%2Fjson`
             getRequest(url, function(responseText) {
-                instanceSelect.innerHTML = ""
-                JSON.parse(responseText).instances.forEach((instance) => {
-                    let option = document.createElement("option")
-                    option.value = instance.id
-                    option.innerHTML = instance.id
-                    instanceSelect.appendChild(option)
-                })
+                let values = JSON.parse(responseText).instances.map((i) => i.id)
+                setOptions(instanceSelect, values)
             })
         }
         instanceSelect.onchange = function(event) {
             instanceID = event.target.value
             let url = `http://labs.metoffice.gov.uk/wotw/collections/${collectionID}/${instanceID}?outputFormat=application%2Fjson`
             getRequest(url, function(responseText) {
-                console.log(JSON.parse(responseText))
+                console.log(JSON.parse(responseText).collection.parameters)
                 responseDiv.innerHTML = responseText
             })
         }
