@@ -14,6 +14,7 @@ wotw = (function() {
 
     ns.main = function() {
         let select = document.createElement("select")
+        let instanceSelect = document.createElement("select")
         url = "http://labs.metoffice.gov.uk/wotw/collections?outputFormat=application%2Fjson"
         getRequest(url, function(responseText) {
             JSON.parse(responseText).collections.forEach((collection) => {
@@ -24,6 +25,20 @@ wotw = (function() {
             })
         })
         document.body.appendChild(select)
+        document.body.appendChild(instanceSelect)
+        select.onchange = function(event) {
+            let collectionID = event.target.value
+            let url = `http://labs.metoffice.gov.uk/wotw/collections/${collectionID}?outputFormat=application%2Fjson`
+            getRequest(url, function(responseText) {
+                instanceSelect.innerHTML = ""
+                JSON.parse(responseText).instances.forEach((instance) => {
+                    let option = document.createElement("option")
+                    option.value = instance.id
+                    option.innerHTML = instance.id
+                    instanceSelect.appendChild(option)
+                })
+            })
+        }
 
 
         let queryDiv = document.getElementById("query")
