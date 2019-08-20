@@ -13,6 +13,19 @@ wotw = (function() {
     }
 
     ns.main = function() {
+        let select = document.createElement("select")
+        url = "http://labs.metoffice.gov.uk/wotw/collections?outputFormat=application%2Fjson"
+        getRequest(url, function(responseText) {
+            JSON.parse(responseText).collections.forEach((collection) => {
+                let option = document.createElement("option")
+                option.value = collection.id
+                option.innerHTML = collection.id
+                select.appendChild(option)
+            })
+        })
+        document.body.appendChild(select)
+
+
         let queryDiv = document.getElementById("query")
         let div = document.getElementById("response")
         url = "http://labs.metoffice.gov.uk/wotw/collections?outputFormat=application%2Fjson"
