@@ -22,15 +22,28 @@ wotw = (function() {
         })
     }
 
+    let parseParameters = function(responseJSON) {
+        return Object.keys(responseJSON.collection.parameters)
+    }
+
+    let parseTimes = function(responseJSON) {
+        console.log(responseJSON)
+        return responseJSON.collection.extent.temporal.range
+    }
+
     ns.main = function() {
         let collectionID = null;
         let instanceID = null;
         let collectionSelect = document.createElement("select")
         let instanceSelect = document.createElement("select")
+        let timeSelect = document.createElement("select")
+        let parameterSelect = document.createElement("select")
         let navDiv = document.getElementById("nav")
         let responseDiv = document.getElementById("response")
         navDiv.appendChild(collectionSelect)
         navDiv.appendChild(instanceSelect)
+        navDiv.appendChild(timeSelect)
+        navDiv.appendChild(parameterSelect)
         url = "http://labs.metoffice.gov.uk/wotw/collections?outputFormat=application%2Fjson"
         getRequest(url, function(responseText) {
             let values = JSON.parse(responseText).collections.map((c) => c.id)
@@ -48,7 +61,8 @@ wotw = (function() {
             instanceID = event.target.value
             let url = `http://labs.metoffice.gov.uk/wotw/collections/${collectionID}/${instanceID}?outputFormat=application%2Fjson`
             getRequest(url, function(responseText) {
-                console.log(JSON.parse(responseText).collection.parameters)
+                setOptions(timeSelect, parseTimes(JSON.parse(responseText)))
+                setOptions(parameterSelect, parseParameters(JSON.parse(responseText)))
                 responseDiv.innerHTML = responseText
             })
         }
